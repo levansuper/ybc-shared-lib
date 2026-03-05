@@ -23,10 +23,13 @@ export enum ServerEvent {
 
 export type Topic = FinancialEvent | UserEvent | ServerEvent;
 
+export const DEFAULT_CLIENT_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
+
 // --- Financial event payloads ---
 
 export interface TransactionData {
   casinoId: number;
+  clientId: string;
   transactionId: string;
   userId: number;
   tokenCode: string;
@@ -53,10 +56,12 @@ export interface TransactionData {
 export interface LoginData {
   userId: string;
   ip: string;
+  clientId: string;
 }
 
 export interface LogoutData {
   userId: string;
+  clientId: string;
 }
 
 export interface RegisterData {
@@ -68,11 +73,13 @@ export interface RegisterData {
   ipAddress: string | null;
   referByUserId: number | null;
   createdAt: string;
+  clientId: string;
 }
 
 export interface SessionExpiredData {
   userId: string;
   sessionId: string;
+  clientId: string;
 }
 
 export interface UserDataRequestData {
