@@ -152,7 +152,7 @@ export interface RewardItemData {
 export interface RewardUpdateSignal {
   userId: number;
   clientId: string;
-  reason: 'rakeback_accumulated' | 'reward_assigned' | 'reward_claimed';
+  reason: 'rakeback_accumulated' | 'reward_assigned' | 'reward_claimed' | 'recentplay_progress';
   reward: RewardItemData;
   timestamp: string;
 }
