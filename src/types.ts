@@ -134,6 +134,8 @@ export interface RewardItemData {
     isAutoclaimable?: boolean;
     description?: string | null;
     imageUrl?: string | null;
+    progressType?: string | null;
+    progressTarget?: number | null;
   } | null;
   status: string;
   availableStartDate: string | null;
@@ -152,7 +154,7 @@ export interface RewardItemData {
 export interface RewardUpdateSignal {
   userId: number;
   clientId: string;
-  reason: 'rakeback_accumulated' | 'reward_assigned' | 'reward_claimed' | 'recentplay_progress';
+  reason: 'rakeback_accumulated' | 'reward_assigned' | 'reward_claimed' | 'recentplay_progress' | 'progress_updated' | 'progress_completed';
   reward: RewardItemData;
   timestamp: string;
 }
