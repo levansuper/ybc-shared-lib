@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SdkConsumer } from '../src/consumer';
-import { FinancialEvent, UserEvent, type ConsumedMessage } from '../src/types';
+import { FinancialEvent, MemberEvent, type ConsumedMessage } from '../src/types';
 import type { Logger } from '../src/logger';
 
 function createMockConsumer() {
@@ -75,11 +75,11 @@ describe('SdkConsumer', () => {
 
     it('should deserialize and pass message to handler', async () => {
       const handler = vi.fn();
-      await consumer.subscribe(UserEvent.Login, handler);
+      await consumer.subscribe(MemberEvent.Login, handler);
 
       const eachMessage = mockConsumer.run.mock.calls[0][0].eachMessage;
       await eachMessage({
-        topic: 'user-event.login',
+        topic: 'member-event.login',
         partition: 0,
         message: {
           offset: '42',
@@ -91,8 +91,8 @@ describe('SdkConsumer', () => {
       });
 
       expect(handler).toHaveBeenCalledOnce();
-      const msg: ConsumedMessage<typeof UserEvent.Login> = handler.mock.calls[0][0];
-      expect(msg.topic).toBe('user-event.login');
+      const msg: ConsumedMessage<typeof MemberEvent.Login> = handler.mock.calls[0][0];
+      expect(msg.topic).toBe('member-event.login');
       expect(msg.partition).toBe(0);
       expect(msg.offset).toBe('42');
       expect(msg.key).toBe('user-1');
@@ -102,11 +102,11 @@ describe('SdkConsumer', () => {
 
     it('should handle null message key', async () => {
       const handler = vi.fn();
-      await consumer.subscribe(UserEvent.Logout, handler);
+      await consumer.subscribe(MemberEvent.Logout, handler);
 
       const eachMessage = mockConsumer.run.mock.calls[0][0].eachMessage;
       await eachMessage({
-        topic: 'user-event.logout',
+        topic: 'member-event.logout',
         partition: 0,
         message: {
           offset: '0',
@@ -122,11 +122,11 @@ describe('SdkConsumer', () => {
 
     it('should handle null message value', async () => {
       const handler = vi.fn();
-      await consumer.subscribe(UserEvent.Logout, handler);
+      await consumer.subscribe(MemberEvent.Logout, handler);
 
       const eachMessage = mockConsumer.run.mock.calls[0][0].eachMessage;
       await eachMessage({
-        topic: 'user-event.logout',
+        topic: 'member-event.logout',
         partition: 0,
         message: {
           offset: '0',
@@ -142,11 +142,11 @@ describe('SdkConsumer', () => {
 
     it('should convert message headers to strings', async () => {
       const handler = vi.fn();
-      await consumer.subscribe(UserEvent.Login, handler);
+      await consumer.subscribe(MemberEvent.Login, handler);
 
       const eachMessage = mockConsumer.run.mock.calls[0][0].eachMessage;
       await eachMessage({
-        topic: 'user-event.login',
+        topic: 'member-event.login',
         partition: 0,
         message: {
           offset: '0',
@@ -162,11 +162,11 @@ describe('SdkConsumer', () => {
 
     it('should default timestamp to empty string when undefined', async () => {
       const handler = vi.fn();
-      await consumer.subscribe(UserEvent.Login, handler);
+      await consumer.subscribe(MemberEvent.Login, handler);
 
       const eachMessage = mockConsumer.run.mock.calls[0][0].eachMessage;
       await eachMessage({
-        topic: 'user-event.login',
+        topic: 'member-event.login',
         partition: 0,
         message: {
           offset: '0',
@@ -183,12 +183,12 @@ describe('SdkConsumer', () => {
     it('should propagate handler errors by default so KafkaJS does not commit the offset', async () => {
       const handler = vi.fn().mockRejectedValueOnce(new Error('handler boom'));
 
-      await consumer.subscribe(UserEvent.Login, handler);
+      await consumer.subscribe(MemberEvent.Login, handler);
 
       const eachMessage = mockConsumer.run.mock.calls[0][0].eachMessage;
       await expect(
         eachMessage({
-          topic: 'user-event.login',
+          topic: 'member-event.login',
           partition: 0,
           message: {
             offset: '5',
@@ -206,11 +206,11 @@ describe('SdkConsumer', () => {
       const swallowConsumer = new SdkConsumer(mockConsumer as any, undefined, undefined, false, mockLogger);
       const handler = vi.fn().mockRejectedValueOnce(new Error('handler boom'));
 
-      await swallowConsumer.subscribe(UserEvent.Login, handler);
+      await swallowConsumer.subscribe(MemberEvent.Login, handler);
 
       const eachMessage = mockConsumer.run.mock.calls[0][0].eachMessage;
       await eachMessage({
-        topic: 'user-event.login',
+        topic: 'member-event.login',
         partition: 0,
         message: {
           offset: '5',
@@ -224,7 +224,7 @@ describe('SdkConsumer', () => {
       expect(mockLogger.error).toHaveBeenCalled();
       expect(mockLogger.error.mock.calls[0][0]).toContain('Error processing message');
       expect(mockLogger.error.mock.calls[0][1]).toEqual(
-        expect.objectContaining({ topic: 'user-event.login', offset: '5' }),
+        expect.objectContaining({ topic: 'member-event.login', offset: '5' }),
       );
     });
   });
@@ -279,11 +279,11 @@ describe('SdkConsumer', () => {
 
     it('should log info on subscribe with topic details', async () => {
       const c = new SdkConsumer(mockConsumer as any, undefined, undefined, undefined, mockLogger);
-      await c.subscribe(UserEvent.Login, vi.fn(), { fromBeginning: true });
+      await c.subscribe(MemberEvent.Login, vi.fn(), { fromBeginning: true });
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         'Subscribing to topic',
-        { topic: 'user-event.login', fromBeginning: true },
+        { topic: 'member-event.login', fromBeginning: true },
       );
     });
 
@@ -300,11 +300,11 @@ describe('SdkConsumer', () => {
     it('should log debug on message processing', async () => {
       const handler = vi.fn();
       const c = new SdkConsumer(mockConsumer as any, undefined, undefined, undefined, mockLogger);
-      await c.subscribe(UserEvent.Login, handler);
+      await c.subscribe(MemberEvent.Login, handler);
 
       const eachMessage = mockConsumer.run.mock.calls[0][0].eachMessage;
       await eachMessage({
-        topic: 'user-event.login',
+        topic: 'member-event.login',
         partition: 2,
         message: {
           offset: '99',
@@ -318,14 +318,14 @@ describe('SdkConsumer', () => {
       const debugCalls = (mockLogger.debug as ReturnType<typeof vi.fn>).mock.calls;
       expect(debugCalls[0][0]).toBe('Processing message');
       expect(debugCalls[0][1]).toEqual({
-        topic: 'user-event.login',
+        topic: 'member-event.login',
         partition: 2,
         offset: '99',
         key: 'user-1',
       });
       expect(debugCalls[1][0]).toBe('Message processed');
       expect(debugCalls[1][1]).toEqual({
-        topic: 'user-event.login',
+        topic: 'member-event.login',
         partition: 2,
         offset: '99',
       });
@@ -334,12 +334,12 @@ describe('SdkConsumer', () => {
     it('should log error on handler failure and still propagate', async () => {
       const handler = vi.fn().mockRejectedValueOnce(new Error('handler boom'));
       const c = new SdkConsumer(mockConsumer as any, undefined, undefined, true, mockLogger);
-      await c.subscribe(UserEvent.Login, handler);
+      await c.subscribe(MemberEvent.Login, handler);
 
       const eachMessage = mockConsumer.run.mock.calls[0][0].eachMessage;
       await expect(
         eachMessage({
-          topic: 'user-event.login',
+          topic: 'member-event.login',
           partition: 0,
           message: {
             offset: '5',
@@ -354,7 +354,7 @@ describe('SdkConsumer', () => {
       expect(mockLogger.error).toHaveBeenCalledWith(
         'Error processing message',
         expect.objectContaining({
-          topic: 'user-event.login',
+          topic: 'member-event.login',
           partition: 0,
           offset: '5',
           error: 'handler boom',

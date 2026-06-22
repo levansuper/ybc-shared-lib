@@ -5,17 +5,17 @@ export enum FinancialEvent {
   Transaction = 'financial-event.transaction',
 }
 
-export enum UserEvent {
-  Login = 'user-event.login',
-  Logout = 'user-event.logout',
-  Register = 'user-event.register',
-  Update = 'user-event.update',
-  SessionExpired = 'user-event.session-expired',
-  DataRequest = 'user-event.data-request',
-  DataResponse = 'user-event.data-response',
-  XpUpdate = 'user-event.xp-update',
-  LevelUp = 'user-event.level-up',
-  RewardUpdate = 'user-event.reward-update',
+export enum MemberEvent {
+  Login = 'member-event.login',
+  Logout = 'member-event.logout',
+  Register = 'member-event.register',
+  Update = 'member-event.update',
+  SessionExpired = 'member-event.session-expired',
+  DataRequest = 'member-event.data-request',
+  DataResponse = 'member-event.data-response',
+  XpUpdate = 'member-event.xp-update',
+  LevelUp = 'member-event.level-up',
+  RewardUpdate = 'member-event.reward-update',
 }
 
 export enum ServerEvent {
@@ -24,7 +24,7 @@ export enum ServerEvent {
   Restart = 'server-event.restart',
 }
 
-export type Topic = FinancialEvent | UserEvent | ServerEvent;
+export type Topic = FinancialEvent | MemberEvent | ServerEvent;
 
 export const DEFAULT_CLIENT_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 
@@ -77,6 +77,107 @@ export interface RegisterData {
   referByUserId: number | null;
   createdAt: string;
   clientId: string;
+
+  // --- Full casino User mirror (all optional so old producers/messages still satisfy the type) ---
+  referByUserCampaignId?: number | null;
+  fireblocksVaultId?: string | null;
+  referralCode?: string | null;
+  walletAddress?: string | null;
+  password?: string | null;
+  role?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  dateOfBirth?: string | null;
+  address?: string | null;
+  postalCode?: string | null;
+  city?: string | null;
+  country?: string | null;
+  occupation?: string | null;
+  gender?: string | null;
+  isActive?: number | null;
+  isVerified?: number | null;
+  verifyAccountToken?: string | null;
+  docType?: string | null;
+  twoFactorSecret?: string | null;
+  twoFactorEnabled?: number | null;
+  kycVerified?: number | null;
+  forgotPasswordToken?: string | null;
+  frontIdentityMediaId?: number | null;
+  backIdentityMediaId?: number | null;
+  ghostModeEnabled?: boolean | null;
+  fiatView?: boolean | null;
+  hideZeroBalance?: boolean | null;
+  emailMarketing?: boolean | null;
+  twoFactorVerifyOtp?: string | null;
+  twoFactorType?: string | null;
+  isAffiliatePartner?: boolean | null;
+  earlyAccessCode?: string | null;
+  tier?: string | null;
+  rating?: number | null;
+  totalWagered?: string | null;
+  totalMonthlyWithdrawn?: number | null;
+  totalMonthlyWithdrawLimit?: number | null;
+  totalWin?: string | null;
+  totalBetsCount?: number | null;
+  totalWinsCount?: number | null;
+  totalExperienceWithReferrals?: number | null;
+  referralCommissionPercentage?: number | null;
+  totalReferralCommissionEarned?: number | null;
+  totalReferralCommissionClaimed?: number | null;
+  totalRecentPlayWagered?: number | null;
+  totalRecentPlayExperience?: number | null;
+  totalWeeklyWagered?: number | null;
+  totalWeekly1Wagered?: number | null;
+  totalWeekly2Wagered?: number | null;
+  totalWeekly3Wagered?: number | null;
+  totalWeekly4Wagered?: number | null;
+  totalWeeklyRaceExperienceGained?: number | null;
+  totalWeeklyExperienceGained?: number | null;
+  totalWeeklyExperienceGainedWithReferrals?: number | null;
+  totalWeekly1ExperienceGained?: number | null;
+  totalWeekly2ExperienceGained?: number | null;
+  totalWeekly3ExperienceGained?: number | null;
+  totalWeekly4ExperienceGained?: number | null;
+  weekly1BonusDistributed?: boolean | null;
+  weekly2BonusDistributed?: boolean | null;
+  weekly3BonusDistributed?: boolean | null;
+  weekly4BonusDistributed?: boolean | null;
+  totalMonthlyWagered?: number | null;
+  totalMonthly1Wagered?: number | null;
+  totalMonthly2Wagered?: number | null;
+  totalMonthly3Wagered?: number | null;
+  totalMonthly4Wagered?: number | null;
+  totalMonthlyExperienceGained?: number | null;
+  totalMonthlyExperienceGainedWithReferrals?: number | null;
+  totalMonthly1ExperienceGained?: number | null;
+  totalMonthly2ExperienceGained?: number | null;
+  totalMonthly3ExperienceGained?: number | null;
+  totalMonthly4ExperienceGained?: number | null;
+  monthly1BonusDistributed?: boolean | null;
+  monthly2BonusDistributed?: boolean | null;
+  monthly3BonusDistributed?: boolean | null;
+  monthly4BonusDistributed?: boolean | null;
+  loyaltyLevelUpBonusAmount?: number | null;
+  loyaltyInstantRackbackAmount?: string | null;
+  loyaltyRecentPlayBonusAmount?: number | null;
+  loyaltyWeeklyBonusAmount?: number | null;
+  loyaltyMonthlyBonusAmount?: number | null;
+  provablyFairClientSeed?: string | null;
+  provablyFairServerSeed?: string | null;
+  provablyFairCurrentNonce?: number | null;
+  provablyFairNextServerSeed?: string | null;
+  bonusCouponAmountUSD?: number | null;
+  levelUpTempBonus?: number | null;
+  selfExclusionTill?: string | null;
+  banned?: boolean | null;
+  bannedReason?: string | null;
+  geoBlockDisabled?: boolean | null;
+  randomIpEnabled?: boolean | null;
+  disabledUntil?: string | null;
+  passwordUpdatedAt?: string | null;
+  updatedAt?: string | null;
+  metamaskAddress?: string | null;
+  telegramId?: string | null;
 }
 
 export interface SessionExpiredData {
@@ -92,7 +193,7 @@ export interface UserDataRequestData {
 
 export interface UserDataResponseData {
   requestId: string;
-  users: RegisterData[];
+  members: RegisterData[];
 }
 
 // --- XP & Level-up event payloads ---
@@ -180,16 +281,16 @@ export interface RestartData {
 
 export interface TopicDataMap {
   [FinancialEvent.Transaction]: TransactionData;
-  [UserEvent.Login]: LoginData;
-  [UserEvent.Logout]: LogoutData;
-  [UserEvent.Register]: RegisterData;
-  [UserEvent.Update]: RegisterData;
-  [UserEvent.SessionExpired]: SessionExpiredData;
-  [UserEvent.DataRequest]: UserDataRequestData;
-  [UserEvent.DataResponse]: UserDataResponseData;
-  [UserEvent.XpUpdate]: XpUpdateData;
-  [UserEvent.LevelUp]: LevelUpData;
-  [UserEvent.RewardUpdate]: RewardUpdateSignal;
+  [MemberEvent.Login]: LoginData;
+  [MemberEvent.Logout]: LogoutData;
+  [MemberEvent.Register]: RegisterData;
+  [MemberEvent.Update]: RegisterData;
+  [MemberEvent.SessionExpired]: SessionExpiredData;
+  [MemberEvent.DataRequest]: UserDataRequestData;
+  [MemberEvent.DataResponse]: UserDataResponseData;
+  [MemberEvent.XpUpdate]: XpUpdateData;
+  [MemberEvent.LevelUp]: LevelUpData;
+  [MemberEvent.RewardUpdate]: RewardUpdateSignal;
   [ServerEvent.Crash]: CrashData;
   [ServerEvent.HealthCheck]: HealthCheckData;
   [ServerEvent.Restart]: RestartData;

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SdkProducer } from '../src/producer';
 import { SdkConsumer } from '../src/consumer';
-import { FinancialEvent, UserEvent, ServerEvent } from '../src/types';
+import { FinancialEvent, MemberEvent, ServerEvent } from '../src/types';
 
 function createMockProducer() {
   return {
@@ -49,7 +49,7 @@ describe('Stress Tests', () => {
 
       for (let i = 0; i < count; i++) {
         promises.push(
-          producer.send(UserEvent.Login, {
+          producer.send(MemberEvent.Login, {
             key: `user-${i}`,
             value: { userId: `user-${i}`, ip: `10.0.${Math.floor(i / 256)}.${i % 256}` },
           }),
@@ -92,10 +92,10 @@ describe('Stress Tests', () => {
         { topic: FinancialEvent.Loss, value: { userId: 'u1', amount: 1, gameId: 'g1' } },
         { topic: FinancialEvent.Deposit, value: { userId: 'u1', amount: 1, currency: 'USD', method: 'card' } },
         { topic: FinancialEvent.Withdrawal, value: { userId: 'u1', amount: 1, currency: 'USD', method: 'bank' } },
-        { topic: UserEvent.Login, value: { userId: 'u1', ip: '1.1.1.1' } },
-        { topic: UserEvent.Logout, value: { userId: 'u1' } },
-        { topic: UserEvent.Register, value: { userId: 'u1', email: 'a@b.com' } },
-        { topic: UserEvent.SessionExpired, value: { userId: 'u1', sessionId: 's1' } },
+        { topic: MemberEvent.Login, value: { userId: 'u1', ip: '1.1.1.1' } },
+        { topic: MemberEvent.Logout, value: { userId: 'u1' } },
+        { topic: MemberEvent.Register, value: { userId: 'u1', email: 'a@b.com' } },
+        { topic: MemberEvent.SessionExpired, value: { userId: 'u1', sessionId: 's1' } },
         { topic: ServerEvent.Crash, value: { serverId: 's1', error: 'oom' } },
         { topic: ServerEvent.HealthCheck, value: { serverId: 's1', status: 'ok' } },
         { topic: ServerEvent.Restart, value: { serverId: 's1', reason: 'deploy' } },
@@ -190,7 +190,7 @@ describe('Stress Tests', () => {
 
       const handler = vi.fn().mockRejectedValue(new Error('handler crash'));
 
-      await consumer.subscribe(UserEvent.Login, handler);
+      await consumer.subscribe(MemberEvent.Login, handler);
 
       const eachMessage = mockConsumer.run.mock.calls[0][0].eachMessage;
       const count = 1_000;
@@ -198,7 +198,7 @@ describe('Stress Tests', () => {
       for (let i = 0; i < count; i++) {
         await expect(
           eachMessage({
-            topic: 'user-event.login',
+            topic: 'member-event.login',
             partition: 0,
             message: {
               offset: String(i),
@@ -245,7 +245,7 @@ describe('Stress Tests', () => {
       const consumer = new SdkConsumer(mockConsumer as any);
 
       const handler = vi.fn();
-      await consumer.subscribe(UserEvent.Login, handler);
+      await consumer.subscribe(MemberEvent.Login, handler);
 
       const eachMessage = mockConsumer.run.mock.calls[0][0].eachMessage;
       const headers: Record<string, Buffer> = {};
@@ -254,7 +254,7 @@ describe('Stress Tests', () => {
       }
 
       await eachMessage({
-        topic: 'user-event.login',
+        topic: 'member-event.login',
         partition: 0,
         message: {
           offset: '0',

@@ -1,4 +1,4 @@
-import { KafkaClient, UserEvent, FinancialEvent } from '../src';
+import { KafkaClient, MemberEvent, FinancialEvent } from '../src';
 
 async function main() {
   const client = new KafkaClient({
@@ -11,7 +11,7 @@ async function main() {
   await producer.connect();
   console.log('Producer connected');
 
-  await producer.send(UserEvent.Login, {
+  await producer.send(MemberEvent.Login, {
     key: 'user-1',
     value: { userId: 'user-1', ip: '192.168.1.1' },
   });

@@ -3,7 +3,7 @@ export { SdkProducer } from './producer';
 export { SdkConsumer } from './consumer';
 export { JsonSerializer } from './serializers';
 export { SdkLogLevel, ConsoleLogger, noopLogger } from './logger';
-export { FinancialEvent, UserEvent, ServerEvent, DEFAULT_CLIENT_ID } from './types';
+export { FinancialEvent, MemberEvent, ServerEvent, DEFAULT_CLIENT_ID } from './types';
 export type { Logger } from './logger';
 export type {
   Topic,

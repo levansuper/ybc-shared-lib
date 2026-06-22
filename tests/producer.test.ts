@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SdkProducer } from '../src/producer';
-import { FinancialEvent, UserEvent } from '../src/types';
+import { FinancialEvent, MemberEvent } from '../src/types';
 import type { Logger } from '../src/logger';
 
 function createMockProducer() {
@@ -46,14 +46,14 @@ describe('SdkProducer', () => {
 
   describe('send', () => {
     it('should send a single message with correct topic and serialized value', async () => {
-      await producer.send(UserEvent.Login, {
+      await producer.send(MemberEvent.Login, {
         key: 'user-1',
         value: { userId: 'user-1', ip: '10.0.0.1' },
       });
 
       expect(mockProducer.send).toHaveBeenCalledOnce();
       const call = mockProducer.send.mock.calls[0][0];
-      expect(call.topic).toBe('user-event.login');
+      expect(call.topic).toBe('member-event.login');
       expect(call.messages).toHaveLength(1);
       expect(call.messages[0].key).toBe('user-1');
 
@@ -62,7 +62,7 @@ describe('SdkProducer', () => {
     });
 
     it('should default key to null when not provided', async () => {
-      await producer.send(UserEvent.Logout, {
+      await producer.send(MemberEvent.Logout, {
         value: { userId: 'user-1' },
       });
 
@@ -71,7 +71,7 @@ describe('SdkProducer', () => {
     });
 
     it('should pass headers through', async () => {
-      await producer.send(UserEvent.Login, {
+      await producer.send(MemberEvent.Login, {
         key: 'u1',
         value: { userId: 'u1', ip: '1.2.3.4' },
         headers: { 'x-trace-id': 'abc-123' },
@@ -150,13 +150,13 @@ describe('SdkProducer', () => {
 
     it('should log debug on send with topic and key', async () => {
       const p = new SdkProducer(mockProducer as any, undefined, mockLogger);
-      await p.send(UserEvent.Login, { key: 'user-1', value: { userId: 'user-1', ip: '10.0.0.1' } });
+      await p.send(MemberEvent.Login, { key: 'user-1', value: { userId: 'user-1', ip: '10.0.0.1' } });
 
       const debugCalls = (mockLogger.debug as ReturnType<typeof vi.fn>).mock.calls;
       expect(debugCalls[0][0]).toBe('Sending message');
-      expect(debugCalls[0][1]).toEqual({ topic: 'user-event.login', key: 'user-1' });
+      expect(debugCalls[0][1]).toEqual({ topic: 'member-event.login', key: 'user-1' });
       expect(debugCalls[1][0]).toBe('Message sent');
-      expect(debugCalls[1][1]).toEqual({ topic: 'user-event.login' });
+      expect(debugCalls[1][1]).toEqual({ topic: 'member-event.login' });
     });
 
     it('should log debug on sendBatch with topic and message count', async () => {
@@ -210,7 +210,7 @@ describe('SdkProducer', () => {
 
       const p = new SdkProducer(mockProducer as any);
       await p.connect();
-      await p.send(UserEvent.Login, { value: { userId: 'u1', ip: '1.1.1.1' } });
+      await p.send(MemberEvent.Login, { value: { userId: 'u1', ip: '1.1.1.1' } });
       await p.disconnect();
 
       expect(consoleSpy).not.toHaveBeenCalled();
