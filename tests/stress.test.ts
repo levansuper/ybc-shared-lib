@@ -36,7 +36,7 @@ describe('Stress Tests', () => {
       for (let i = 0; i < count; i++) {
         await producer.send(FinancialEvent.Transaction, {
           key: `user-${i}`,
-          value: { userId: `user-${i}`, amount: i, currency: 'USD', transactionId: `tx-${i}` },
+          value: { memberId: `user-${i}`, amount: i, currency: 'USD', transactionId: `tx-${i}` },
         });
       }
 
@@ -51,7 +51,7 @@ describe('Stress Tests', () => {
         promises.push(
           producer.send(MemberEvent.Login, {
             key: `user-${i}`,
-            value: { userId: `user-${i}`, ip: `10.0.${Math.floor(i / 256)}.${i % 256}` },
+            value: { memberId: `user-${i}`, ip: `10.0.${Math.floor(i / 256)}.${i % 256}` },
           }),
         );
       }
@@ -68,7 +68,7 @@ describe('Stress Tests', () => {
         const messages = Array.from({ length: batchSize }, (_, i) => ({
           key: `user-${b}-${i}`,
           value: {
-            userId: `user-${b}-${i}`,
+            memberId: `user-${b}-${i}`,
             amount: i * 10,
             currency: 'USD',
             transactionId: `tx-${b}-${i}`,
@@ -87,15 +87,15 @@ describe('Stress Tests', () => {
 
     it('should handle rapid topic switching across all topics', async () => {
       const topics = [
-        { topic: FinancialEvent.Transaction, value: { userId: 'u1', amount: 1, currency: 'USD', transactionId: 'tx' } },
-        { topic: FinancialEvent.Win, value: { userId: 'u1', amount: 1, gameId: 'g1' } },
-        { topic: FinancialEvent.Loss, value: { userId: 'u1', amount: 1, gameId: 'g1' } },
-        { topic: FinancialEvent.Deposit, value: { userId: 'u1', amount: 1, currency: 'USD', method: 'card' } },
-        { topic: FinancialEvent.Withdrawal, value: { userId: 'u1', amount: 1, currency: 'USD', method: 'bank' } },
-        { topic: MemberEvent.Login, value: { userId: 'u1', ip: '1.1.1.1' } },
-        { topic: MemberEvent.Logout, value: { userId: 'u1' } },
-        { topic: MemberEvent.Register, value: { userId: 'u1', email: 'a@b.com' } },
-        { topic: MemberEvent.SessionExpired, value: { userId: 'u1', sessionId: 's1' } },
+        { topic: FinancialEvent.Transaction, value: { memberId: 'u1', amount: 1, currency: 'USD', transactionId: 'tx' } },
+        { topic: FinancialEvent.Win, value: { memberId: 'u1', amount: 1, gameId: 'g1' } },
+        { topic: FinancialEvent.Loss, value: { memberId: 'u1', amount: 1, gameId: 'g1' } },
+        { topic: FinancialEvent.Deposit, value: { memberId: 'u1', amount: 1, currency: 'USD', method: 'card' } },
+        { topic: FinancialEvent.Withdrawal, value: { memberId: 'u1', amount: 1, currency: 'USD', method: 'bank' } },
+        { topic: MemberEvent.Login, value: { memberId: 'u1', ip: '1.1.1.1' } },
+        { topic: MemberEvent.Logout, value: { memberId: 'u1' } },
+        { topic: MemberEvent.Register, value: { memberId: 'u1', email: 'a@b.com' } },
+        { topic: MemberEvent.SessionExpired, value: { memberId: 'u1', sessionId: 's1' } },
         { topic: ServerEvent.Crash, value: { serverId: 's1', error: 'oom' } },
         { topic: ServerEvent.HealthCheck, value: { serverId: 's1', status: 'ok' } },
         { topic: ServerEvent.Restart, value: { serverId: 's1', reason: 'deploy' } },
@@ -132,7 +132,7 @@ describe('Stress Tests', () => {
         try {
           await producer.send(FinancialEvent.Win, {
             key: `u-${i}`,
-            value: { userId: `u-${i}`, amount: i * 10, gameId: `g-${i}` },
+            value: { memberId: `u-${i}`, amount: i * 10, gameId: `g-${i}` },
           });
           successCount++;
         } catch {
@@ -167,7 +167,7 @@ describe('Stress Tests', () => {
             offset: String(i),
             key: Buffer.from(`user-${i}`),
             value: Buffer.from(JSON.stringify({
-              userId: `user-${i}`,
+              memberId: `user-${i}`,
               amount: i,
               currency: 'USD',
               transactionId: `tx-${i}`,
@@ -203,7 +203,7 @@ describe('Stress Tests', () => {
             message: {
               offset: String(i),
               key: null,
-              value: Buffer.from(JSON.stringify({ userId: `u-${i}`, ip: '1.1.1.1' })),
+              value: Buffer.from(JSON.stringify({ memberId: `u-${i}`, ip: '1.1.1.1' })),
               headers: {},
               timestamp: String(Date.now()),
             },
@@ -259,7 +259,7 @@ describe('Stress Tests', () => {
         message: {
           offset: '0',
           key: null,
-          value: Buffer.from(JSON.stringify({ userId: 'u1', ip: '1.1.1.1' })),
+          value: Buffer.from(JSON.stringify({ memberId: 'u1', ip: '1.1.1.1' })),
           headers,
           timestamp: String(Date.now()),
         },
@@ -297,7 +297,7 @@ describe('Stress Tests', () => {
                 offset: String(i),
                 key: Buffer.from(`key-${i}`),
                 value: Buffer.from(JSON.stringify({
-                  userId: `u-${i}`,
+                  memberId: `u-${i}`,
                   amount: i,
                   currency: 'USD',
                   transactionId: `tx-${i}`,

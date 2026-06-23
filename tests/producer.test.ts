@@ -48,7 +48,7 @@ describe('SdkProducer', () => {
     it('should send a single message with correct topic and serialized value', async () => {
       await producer.send(MemberEvent.Login, {
         key: 'user-1',
-        value: { userId: 'user-1', ip: '10.0.0.1' },
+        value: { memberId: 'user-1', ip: '10.0.0.1' },
       });
 
       expect(mockProducer.send).toHaveBeenCalledOnce();
@@ -58,12 +58,12 @@ describe('SdkProducer', () => {
       expect(call.messages[0].key).toBe('user-1');
 
       const value = JSON.parse(call.messages[0].value.toString());
-      expect(value).toEqual({ userId: 'user-1', ip: '10.0.0.1' });
+      expect(value).toEqual({ memberId: 'user-1', ip: '10.0.0.1' });
     });
 
     it('should default key to null when not provided', async () => {
       await producer.send(MemberEvent.Logout, {
-        value: { userId: 'user-1' },
+        value: { memberId: 'user-1' },
       });
 
       const call = mockProducer.send.mock.calls[0][0];
@@ -73,7 +73,7 @@ describe('SdkProducer', () => {
     it('should pass headers through', async () => {
       await producer.send(MemberEvent.Login, {
         key: 'u1',
-        value: { userId: 'u1', ip: '1.2.3.4' },
+        value: { memberId: 'u1', ip: '1.2.3.4' },
         headers: { 'x-trace-id': 'abc-123' },
       });
 
@@ -84,7 +84,7 @@ describe('SdkProducer', () => {
     it('should throw a descriptive error on failure', async () => {
       mockProducer.send.mockRejectedValueOnce(new Error('network error'));
       await expect(
-        producer.send(FinancialEvent.Win, { value: { userId: 'u1', amount: 100, gameId: 'g1' } }),
+        producer.send(FinancialEvent.Win, { value: { memberId: 'u1', amount: 100, gameId: 'g1' } }),
       ).rejects.toThrow('Failed to send message to financial-event.win: network error');
     });
   });
@@ -92,8 +92,8 @@ describe('SdkProducer', () => {
   describe('sendBatch', () => {
     it('should send multiple messages in a single call', async () => {
       await producer.sendBatch(FinancialEvent.Transaction, [
-        { key: 'u1', value: { userId: 'u1', amount: 50, currency: 'USD', transactionId: 'tx-1' } },
-        { key: 'u2', value: { userId: 'u2', amount: 100, currency: 'EUR', transactionId: 'tx-2' } },
+        { key: 'u1', value: { memberId: 'u1', amount: 50, currency: 'USD', transactionId: 'tx-1' } },
+        { key: 'u2', value: { memberId: 'u2', amount: 100, currency: 'EUR', transactionId: 'tx-2' } },
       ]);
 
       expect(mockProducer.send).toHaveBeenCalledOnce();
@@ -111,7 +111,7 @@ describe('SdkProducer', () => {
       mockProducer.send.mockRejectedValueOnce(new Error('quota exceeded'));
       await expect(
         producer.sendBatch(FinancialEvent.Transaction, [
-          { value: { userId: 'u1', amount: 1, currency: 'USD', transactionId: 'tx-1' } },
+          { value: { memberId: 'u1', amount: 1, currency: 'USD', transactionId: 'tx-1' } },
         ]),
       ).rejects.toThrow('Failed to send batch to financial-event.transaction: quota exceeded');
     });
@@ -150,7 +150,7 @@ describe('SdkProducer', () => {
 
     it('should log debug on send with topic and key', async () => {
       const p = new SdkProducer(mockProducer as any, undefined, mockLogger);
-      await p.send(MemberEvent.Login, { key: 'user-1', value: { userId: 'user-1', ip: '10.0.0.1' } });
+      await p.send(MemberEvent.Login, { key: 'user-1', value: { memberId: 'user-1', ip: '10.0.0.1' } });
 
       const debugCalls = (mockLogger.debug as ReturnType<typeof vi.fn>).mock.calls;
       expect(debugCalls[0][0]).toBe('Sending message');
@@ -162,8 +162,8 @@ describe('SdkProducer', () => {
     it('should log debug on sendBatch with topic and message count', async () => {
       const p = new SdkProducer(mockProducer as any, undefined, mockLogger);
       await p.sendBatch(FinancialEvent.Transaction, [
-        { key: 'u1', value: { userId: 'u1', amount: 50, currency: 'USD', transactionId: 'tx-1' } },
-        { key: 'u2', value: { userId: 'u2', amount: 100, currency: 'EUR', transactionId: 'tx-2' } },
+        { key: 'u1', value: { memberId: 'u1', amount: 50, currency: 'USD', transactionId: 'tx-1' } },
+        { key: 'u2', value: { memberId: 'u2', amount: 100, currency: 'EUR', transactionId: 'tx-2' } },
       ]);
 
       const debugCalls = (mockLogger.debug as ReturnType<typeof vi.fn>).mock.calls;
@@ -178,7 +178,7 @@ describe('SdkProducer', () => {
       const p = new SdkProducer(mockProducer as any, undefined, mockLogger);
 
       await expect(
-        p.send(FinancialEvent.Win, { value: { userId: 'u1', amount: 100, gameId: 'g1' } }),
+        p.send(FinancialEvent.Win, { value: { memberId: 'u1', amount: 100, gameId: 'g1' } }),
       ).rejects.toThrow();
 
       expect(mockLogger.error).toHaveBeenCalledWith(
@@ -193,7 +193,7 @@ describe('SdkProducer', () => {
 
       await expect(
         p.sendBatch(FinancialEvent.Transaction, [
-          { value: { userId: 'u1', amount: 1, currency: 'USD', transactionId: 'tx-1' } },
+          { value: { memberId: 'u1', amount: 1, currency: 'USD', transactionId: 'tx-1' } },
         ]),
       ).rejects.toThrow();
 
@@ -210,7 +210,7 @@ describe('SdkProducer', () => {
 
       const p = new SdkProducer(mockProducer as any);
       await p.connect();
-      await p.send(MemberEvent.Login, { value: { userId: 'u1', ip: '1.1.1.1' } });
+      await p.send(MemberEvent.Login, { value: { memberId: 'u1', ip: '1.1.1.1' } });
       await p.disconnect();
 
       expect(consoleSpy).not.toHaveBeenCalled();

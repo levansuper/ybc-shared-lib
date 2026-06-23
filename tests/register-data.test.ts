@@ -8,13 +8,13 @@ describe('RegisterData full-mirror contract', () => {
   // build (and `vitest run`, which type-checks via ts) acts as the shape guard.
   const full: RegisterData = {
     // existing 9
-    userId: 1,
-    userGuid: 'guid-1',
+    memberId: 1,
+    memberGuid: 'guid-1',
     email: 'a@b.c',
     username: 'alice',
     signupMethod: 'email',
     ipAddress: '127.0.0.1',
-    referByUserId: null,
+    referByMemberId: null,
     createdAt: new Date('2026-01-01T00:00:00.000Z').toISOString(),
     clientId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
     // full mirror
@@ -127,17 +127,17 @@ describe('RegisterData full-mirror contract', () => {
 
   it('an old producer payload (only the original 9 fields) still satisfies RegisterData', () => {
     const minimal: RegisterData = {
-      userId: 2,
-      userGuid: 'guid-2',
+      memberId: 2,
+      memberGuid: 'guid-2',
       email: null,
       username: null,
       signupMethod: 'email',
       ipAddress: null,
-      referByUserId: null,
+      referByMemberId: null,
       createdAt: full.createdAt,
       clientId: full.clientId,
     };
-    expect(minimal.userId).toBe(2);
+    expect(minimal.memberId).toBe(2);
   });
 
   it('carries the big/decimal mirror fields as strings (JSON-safe)', () => {

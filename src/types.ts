@@ -34,7 +34,7 @@ export interface TransactionData {
   casinoId: number;
   clientId: string;
   transactionId: string;
-  userId: number;
+  memberId: number;
   tokenCode: string;
   tokenAmount: string;
   fiatCode: string | null;
@@ -57,24 +57,24 @@ export interface TransactionData {
 // --- User event payloads ---
 
 export interface LoginData {
-  userId: string;
+  memberId: string;
   ip: string;
   clientId: string;
 }
 
 export interface LogoutData {
-  userId: string;
+  memberId: string;
   clientId: string;
 }
 
 export interface RegisterData {
-  userId: number;
-  userGuid: string;
+  memberId: number;
+  memberGuid: string;
   email: string | null;
   username: string | null;
   signupMethod: string;
   ipAddress: string | null;
-  referByUserId: number | null;
+  referByMemberId: number | null;
   createdAt: string;
   clientId: string;
 
@@ -181,13 +181,13 @@ export interface RegisterData {
 }
 
 export interface SessionExpiredData {
-  userId: string;
+  memberId: string;
   sessionId: string;
   clientId: string;
 }
 
 export interface UserDataRequestData {
-  userIds: number[];
+  memberIds: number[];
   requestId: string;
 }
 
@@ -199,7 +199,7 @@ export interface UserDataResponseData {
 // --- XP & Level-up event payloads ---
 
 export interface XpUpdateData {
-  userId: number;
+  memberId: number;
   clientId: string;
   xpGained: number;
   totalExperience: number;
@@ -210,7 +210,7 @@ export interface XpUpdateData {
 }
 
 export interface LevelUpData {
-  userId: number;
+  memberId: number;
   clientId: string;
   oldTier: string;
   oldRating: number;
@@ -253,7 +253,7 @@ export interface RewardItemData {
 }
 
 export interface RewardUpdateSignal {
-  userId: number;
+  memberId: number;
   clientId: string;
   reason: 'rakeback_accumulated' | 'reward_assigned' | 'reward_claimed' | 'recentplay_progress' | 'progress_updated' | 'progress_completed';
   reward: RewardItemData;

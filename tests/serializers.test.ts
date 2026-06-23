@@ -5,7 +5,7 @@ describe('JsonSerializer', () => {
   const serializer = new JsonSerializer();
 
   it('should serialize an object to a Buffer', () => {
-    const data = { userId: 'u1', amount: 100 };
+    const data = { memberId: 'u1', amount: 100 };
     const result = serializer.serialize(data);
 
     expect(Buffer.isBuffer(result)).toBe(true);
@@ -13,7 +13,7 @@ describe('JsonSerializer', () => {
   });
 
   it('should deserialize a Buffer back to an object', () => {
-    const data = { userId: 'u1', amount: 100 };
+    const data = { memberId: 'u1', amount: 100 };
     const buffer = Buffer.from(JSON.stringify(data));
     const result = serializer.deserialize(buffer);
 

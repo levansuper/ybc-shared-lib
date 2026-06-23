@@ -84,7 +84,7 @@ describe('SdkConsumer', () => {
         message: {
           offset: '42',
           key: Buffer.from('user-1'),
-          value: Buffer.from(JSON.stringify({ userId: 'user-1', ip: '10.0.0.1' })),
+          value: Buffer.from(JSON.stringify({ memberId: 'user-1', ip: '10.0.0.1' })),
           headers: {},
           timestamp: '1700000000000',
         },
@@ -96,7 +96,7 @@ describe('SdkConsumer', () => {
       expect(msg.partition).toBe(0);
       expect(msg.offset).toBe('42');
       expect(msg.key).toBe('user-1');
-      expect(msg.value).toEqual({ userId: 'user-1', ip: '10.0.0.1' });
+      expect(msg.value).toEqual({ memberId: 'user-1', ip: '10.0.0.1' });
       expect(msg.timestamp).toBe('1700000000000');
     });
 
@@ -111,7 +111,7 @@ describe('SdkConsumer', () => {
         message: {
           offset: '0',
           key: null,
-          value: Buffer.from(JSON.stringify({ userId: 'u1' })),
+          value: Buffer.from(JSON.stringify({ memberId: 'u1' })),
           headers: {},
           timestamp: '1700000000000',
         },
@@ -151,7 +151,7 @@ describe('SdkConsumer', () => {
         message: {
           offset: '0',
           key: null,
-          value: Buffer.from(JSON.stringify({ userId: 'u1', ip: '1.1.1.1' })),
+          value: Buffer.from(JSON.stringify({ memberId: 'u1', ip: '1.1.1.1' })),
           headers: { 'x-trace-id': Buffer.from('trace-abc') },
           timestamp: '1700000000000',
         },
@@ -171,7 +171,7 @@ describe('SdkConsumer', () => {
         message: {
           offset: '0',
           key: null,
-          value: Buffer.from(JSON.stringify({ userId: 'u1', ip: '1.1.1.1' })),
+          value: Buffer.from(JSON.stringify({ memberId: 'u1', ip: '1.1.1.1' })),
           headers: {},
           timestamp: undefined,
         },
@@ -193,7 +193,7 @@ describe('SdkConsumer', () => {
           message: {
             offset: '5',
             key: null,
-            value: Buffer.from(JSON.stringify({ userId: 'u1', ip: '1.1.1.1' })),
+            value: Buffer.from(JSON.stringify({ memberId: 'u1', ip: '1.1.1.1' })),
             headers: {},
             timestamp: '1700000000000',
           },
@@ -215,7 +215,7 @@ describe('SdkConsumer', () => {
         message: {
           offset: '5',
           key: null,
-          value: Buffer.from(JSON.stringify({ userId: 'u1', ip: '1.1.1.1' })),
+          value: Buffer.from(JSON.stringify({ memberId: 'u1', ip: '1.1.1.1' })),
           headers: {},
           timestamp: '1700000000000',
         },
@@ -309,7 +309,7 @@ describe('SdkConsumer', () => {
         message: {
           offset: '99',
           key: Buffer.from('user-1'),
-          value: Buffer.from(JSON.stringify({ userId: 'user-1', ip: '10.0.0.1' })),
+          value: Buffer.from(JSON.stringify({ memberId: 'user-1', ip: '10.0.0.1' })),
           headers: {},
           timestamp: '1700000000000',
         },
@@ -344,7 +344,7 @@ describe('SdkConsumer', () => {
           message: {
             offset: '5',
             key: null,
-            value: Buffer.from(JSON.stringify({ userId: 'u1', ip: '1.1.1.1' })),
+            value: Buffer.from(JSON.stringify({ memberId: 'u1', ip: '1.1.1.1' })),
             headers: {},
             timestamp: '1700000000000',
           },

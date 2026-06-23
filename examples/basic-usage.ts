@@ -13,13 +13,13 @@ async function main() {
 
   await producer.send(MemberEvent.Login, {
     key: 'user-1',
-    value: { userId: 'user-1', ip: '192.168.1.1' },
+    value: { memberId: 'user-1', ip: '192.168.1.1' },
   });
   console.log('Login event sent');
 
   await producer.sendBatch(FinancialEvent.Transaction, [
-    { key: 'user-2', value: { userId: 'user-2', amount: 50, currency: 'USD', transactionId: 'tx-001' } },
-    { key: 'user-3', value: { userId: 'user-3', amount: 200, currency: 'USD', transactionId: 'tx-002' } },
+    { key: 'user-2', value: { memberId: 'user-2', amount: 50, currency: 'USD', transactionId: 'tx-001' } },
+    { key: 'user-3', value: { memberId: 'user-3', amount: 200, currency: 'USD', transactionId: 'tx-002' } },
   ]);
   console.log('Transaction batch sent');
 
