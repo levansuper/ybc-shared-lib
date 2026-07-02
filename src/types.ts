@@ -24,7 +24,17 @@ export enum ServerEvent {
   Restart = 'server-event.restart',
 }
 
-export type Topic = FinancialEvent | MemberEvent | ServerEvent;
+/**
+ * Audit events — a uniform "someone changed something" record emitted by every
+ * write mutation across the platform (player + admin). ONE topic; the actor and
+ * the specific action are carried in the payload (see AuditActionData), not in
+ * separate topics. The segmentation event-log sink records these verbatim.
+ */
+export enum AuditEvent {
+  Action = 'audit-event.action',
+}
+
+export type Topic = FinancialEvent | MemberEvent | ServerEvent | AuditEvent;
 
 export const DEFAULT_CLIENT_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 
@@ -277,6 +287,44 @@ export interface RestartData {
   reason: string;
 }
 
+// --- Audit event payload ---
+
+/**
+ * Uniform audit record for any state-changing action across the platform.
+ *
+ * Emitted by write mutations in auth-api and casino-api; recorded verbatim by
+ * the segmentation event-log sink (which reads `clientId`/`casinoId` for tenant
+ * scoping and the envelope headers for id/source/occurredAt).
+ *
+ * WHITELIST DISCIPLINE: `changed` carries field NAMES + coarse before/after
+ * values only. Never put secrets (password hashes, 2FA secrets, tokens) in any
+ * field of this payload.
+ */
+export interface AuditActionData {
+  /** Dotted action verb, e.g. 'role.created', 'casino.suspended', 'account.2fa-toggled'. */
+  action: string;
+  /** Kind of thing acted on, e.g. 'role', 'casino', 'admin-user', 'withdrawal'. */
+  entityType: string;
+  /** Id of the affected entity (stringified). */
+  entityId: string;
+  /** Who acted. 'system' for unauthenticated/pre-auth paths. */
+  actorType: 'player' | 'admin' | 'system';
+  /** Actor id (stringified), or null when unauthenticated. */
+  actorId: string | null;
+  /** Human-readable actor label (username/email), or null. */
+  actorName: string | null;
+  /** Tenant the action belongs to (casino/client id). */
+  clientId: string;
+  /** Optional numeric casino id when the emitting service has it. */
+  casinoId?: number | null;
+  /** Short human-readable description of what happened. */
+  summary: string;
+  /** Whitelisted field-level diff — names + safe values only, never secrets. */
+  changed?: Record<string, { from?: unknown; to?: unknown }> | null;
+  /** ISO occurredAt override; defaults to emit time. */
+  occurredAt?: string;
+}
+
 // --- Topic → Data type mapping ---
 
 export interface TopicDataMap {
@@ -294,6 +342,7 @@ export interface TopicDataMap {
   [ServerEvent.Crash]: CrashData;
   [ServerEvent.HealthCheck]: HealthCheckData;
   [ServerEvent.Restart]: RestartData;
+  [AuditEvent.Action]: AuditActionData;
 }
 
 export interface KafkaClientConfig {

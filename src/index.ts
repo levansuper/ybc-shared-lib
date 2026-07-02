@@ -1,10 +1,21 @@
 export { KafkaClient } from './client';
 export { SdkProducer } from './producer';
 export { SdkConsumer } from './consumer';
+export { EventEmitter } from './event-emitter';
 export { JsonSerializer } from './serializers';
 export { SdkLogLevel, ConsoleLogger, noopLogger } from './logger';
-export { FinancialEvent, MemberEvent, ServerEvent, DEFAULT_CLIENT_ID } from './types';
+export { FinancialEvent, MemberEvent, ServerEvent, AuditEvent, DEFAULT_CLIENT_ID } from './types';
+export {
+  buildEnvelopeHeaders,
+  readEnvelopeFromHeaders,
+  EVENT_HEADER_ID,
+  EVENT_HEADER_SOURCE,
+  EVENT_HEADER_OCCURRED_AT,
+  EVENT_HEADER_SCHEMA_VERSION,
+} from './envelope';
 export type { Logger } from './logger';
+export type { EmitOptions } from './event-emitter';
+export type { EventEnvelope } from './envelope';
 export type {
   Topic,
   TopicDataMap,
@@ -22,6 +33,7 @@ export type {
   CrashData,
   HealthCheckData,
   RestartData,
+  AuditActionData,
   KafkaClientConfig,
   ProducerConfig,
   ConsumerConfig,
